@@ -21,6 +21,7 @@ File data;
 
 Adafruit_BMP280 bmp;
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
+int counter = 0;
 
 void setup() 
 {
@@ -40,12 +41,23 @@ status = bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID);
   
 }
 
-void loop() {
-  data = SD.open("SensorCode", FILE_WRITE);
+void loop() 
+{
+  float temp = bmp.readTemperature(); //in Celcius
+  float pressure = bmp.readPressure(); //in Pascals
+  float altitude = bmp.readAltitude(1013.25); //in meters
+  mma.read();
+  sensors_event_t event;
+  mma.getEvent(&event);
+  float accel = event.acceleration.z; //in meters/second^2
 
-  temp = bmp.readTemperature(); //in Celcius
-  pressure = bmp.readPressure(); //in Pascals
-  altitude = bmp.readAltitude(1013.25); //in meters
-  sensors_event_t event = mma.getEvent(&event);
-  accel = event.acceleration.z(); //in meters/second^2
+
+  Serial.println(temp);
+  Serial.println(pressure);
+  Serial.println(altitude);
+  Serial.println(accel);
+  
+  //data = SD.open("SensorCode", FILE_WRITE);
+delay(2000);
+
 }
